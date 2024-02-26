@@ -6,6 +6,16 @@ Options:
   -h --help             Show this help message
 """
 
+# const options = {
+#   "physics": {
+#     "barnesHut": {
+#       "gravitationalConstant": -3400,
+#       "centralGravity": 0,
+#       "damping": 0.32
+#     },
+#     "minVelocity": 0.75
+#   }
+# }
 
 
 from pyvis.network import Network
@@ -18,17 +28,16 @@ import pyarrow
 from docopt import docopt
 import webbrowser
 
-
 def print_debug(message):
     print(
         f"{datetime.datetime.now()} Debug on line {inspect.currentframe().f_back.f_lineno}: {message}"
     )
 
-def open_in_browser():
+def open_in_browser(file):
     cwd = os.getenv("PWD")
     choice = input("Do you want to open the browser to view the network graph? [y/n]: ").lower()
     if choice == 'y':
-        webbrowser.open_new_tab(f'file://{cwd}/nodes.html')
+        webbrowser.open_new_tab(f'file://{cwd}/{file}')
     elif choice == 'n':
         print("Okay, not opening the browser.")
     else:
@@ -51,7 +60,8 @@ def callNQE(appserver, username, password, networkId, query):
               else:
                   return response_json["items"]
         else:
-            return {"error": "Request failed"}
+            print_debug(response_json)
+            raise Exception("Request failed")
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
         return None
@@ -60,6 +70,9 @@ def callNQE(appserver, username, password, networkId, query):
 def main(appserver, networkId):
     username = os.getenv("FWD_USER")
     password = os.getenv("FWD_PASSWORD")
+    if not username or not password:
+        print("Please set FWD_USER and FWD_PASSWORD")
+        exit(1)
     query= """ 
     getLinks(device) =
 foreach interface in device.interfaces
@@ -81,18 +94,17 @@ select {source: device.name, target: link.deviceName}
     result = callNQE(appserver, username, password, networkId, query)
     df = pd.DataFrame(result)
     nodes = pd.unique(df[['source', 'target']].values.ravel('K'))
-    net = Network(height="800px", width="100%", bgcolor="#222222", font_color="white")
+    net = Network(height="800px", width="100%", bgcolor="#222222", font_color="white", filter_menu=True)
     nodes_list = nodes.tolist()
     net.add_nodes(nodes_list,  title=nodes_list)
     for _, row in df.iterrows():
         net.add_edge(row['source'], row['target'])
-    net.show('nodes.html', notebook=False)
-    open_in_browser()
+    output = f"nodes-{networkId}.html"
+    # net.show_buttons(filter_=['physics'])
+   
+    net.show(output, notebook=False)
+    open_in_browser(output)
 
-
-
-open_in_browser()
-              
 
 if __name__ == '__main__':
     arguments = docopt(__doc__)
