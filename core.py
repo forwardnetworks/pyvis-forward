@@ -74,22 +74,15 @@ def main(appserver, networkId):
         print("Please set FWD_USER and FWD_PASSWORD")
         exit(1)
     query= """ 
-    getLinks(device) =
+foreach device in network.devices
 foreach interface in device.interfaces
-let links =  interface.links
-where isPresent(links)
-foreach link in links
-select  link;
-
-getVertexes = 
-foreach device in network.devices
-select device.name;
-  
-foreach device in network.devices
-let links = getLinks(device)
-let vertexes = getVertexes()
-foreach link in links
-select {source: device.name, target: link.deviceName}
+foreach link in interface.links
+select {
+  source: device.name,
+  sourceInterface: interface.name,
+  target: link.deviceName,
+  targetInterface: link.ifaceName
+}
 """
     result = callNQE(appserver, username, password, networkId, query)
     df = pd.DataFrame(result)
@@ -98,7 +91,7 @@ select {source: device.name, target: link.deviceName}
     nodes_list = nodes.tolist()
     net.add_nodes(nodes_list,  title=nodes_list)
     for _, row in df.iterrows():
-        net.add_edge(row['source'], row['target'])
+        net.add_edge(row['source'], row['target'], title = f"{row['source'] + '-' + row['sourceInterface'] + '<->' + row['target'] + '-' +row['targetInterface']   }")
     output = f"nodes-{networkId}.html"
     # net.show_buttons(filter_=['physics'])
    
