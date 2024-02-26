@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 800px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-app-lb01", "label": "atl-app-lb01", "shape": "dot", "title": "atl-app-lb01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-ce01", "label": "atl-ce01", "shape": "dot", "title": "atl-ce01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-ce02", "label": "atl-ce02", "shape": "dot", "title": "atl-ce02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-core-pe01", "label": "atl-core-pe01", "shape": "dot", "title": "atl-core-pe01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-core-pe02", "label": "atl-core-pe02", "shape": "dot", "title": "atl-core-pe02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc01", "label": "atl-dc01-acc01", "shape": "dot", "title": "atl-dc01-acc01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc02", "label": "atl-dc01-acc02", "shape": "dot", "title": "atl-dc01-acc02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc03", "label": "atl-dc01-acc03", "shape": "dot", "title": "atl-dc01-acc03"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc04", "label": "atl-dc01-acc04", "shape": "dot", "title": "atl-dc01-acc04"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc05", "label": "atl-dc01-acc05", "shape": "dot", "title": "atl-dc01-acc05"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc06", "label": "atl-dc01-acc06", "shape": "dot", "title": "atl-dc01-acc06"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc07", "label": "atl-dc01-acc07", "shape": "dot", "title": "atl-dc01-acc07"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc08", "label": "atl-dc01-acc08", "shape": "dot", "title": "atl-dc01-acc08"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc09", "label": "atl-dc01-acc09", "shape": "dot", "title": "atl-dc01-acc09"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc10", "label": "atl-dc01-acc10", "shape": "dot", "title": "atl-dc01-acc10"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc11", "label": "atl-dc01-acc11", "shape": "dot", "title": "atl-dc01-acc11"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc12", "label": "atl-dc01-acc12", "shape": "dot", "title": "atl-dc01-acc12"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc13", "label": "atl-dc01-acc13", "shape": "dot", "title": "atl-dc01-acc13"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-acc14", "label": "atl-dc01-acc14", "shape": "dot", "title": "atl-dc01-acc14"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-spine01", "label": "atl-dc01-spine01", "shape": "dot", "title": "atl-dc01-spine01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-dc01-spine02", "label": "atl-dc01-spine02", "shape": "dot", "title": "atl-dc01-spine02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-edge-fw01", "label": "atl-edge-fw01", "shape": "dot", "title": "atl-edge-fw01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-edge-fw02", "label": "atl-edge-fw02", "shape": "dot", "title": "atl-edge-fw02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-internet", "label": "atl-internet", "shape": "dot", "title": "atl-internet"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-isp-edge01", "label": "atl-isp-edge01", "shape": "dot", "title": "atl-isp-edge01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-isp-edge02", "label": "atl-isp-edge02", "shape": "dot", "title": "atl-isp-edge02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "atl-te-fw01", "label": "atl-te-fw01", "shape": "dot", "title": "atl-te-fw01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "internet", "label": "internet", "shape": "dot", "title": "internet"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "nsx-esxi-6-5-1_sjc-nsx-DSwitch", "label": "nsx-esxi-6-5-1_sjc-nsx-DSwitch", "shape": "dot", "title": "nsx-esxi-6-5-1_sjc-nsx-DSwitch"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "nsx-esxi-6-5-3_atl-nsx-Dswitch", "label": "nsx-esxi-6-5-3_atl-nsx-Dswitch", "shape": "dot", "title": "nsx-esxi-6-5-3_atl-nsx-Dswitch"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "nsx-manager-6-4_edge-1", "label": "nsx-manager-6-4_edge-1", "shape": "dot", "title": "nsx-manager-6-4_edge-1"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-app-lb01", "label": "sjc-app-lb01", "shape": "dot", "title": "sjc-app-lb01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-ce01", "label": "sjc-ce01", "shape": "dot", "title": "sjc-ce01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-ce02", "label": "sjc-ce02", "shape": "dot", "title": "sjc-ce02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-core-pe01", "label": "sjc-core-pe01", "shape": "dot", "title": "sjc-core-pe01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-core-pe02", "label": "sjc-core-pe02", "shape": "dot", "title": "sjc-core-pe02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc001", "label": "sjc-dc12-acc001", "shape": "dot", "title": "sjc-dc12-acc001"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc002", "label": "sjc-dc12-acc002", "shape": "dot", "title": "sjc-dc12-acc002"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc003", "label": "sjc-dc12-acc003", "shape": "dot", "title": "sjc-dc12-acc003"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc004", "label": "sjc-dc12-acc004", "shape": "dot", "title": "sjc-dc12-acc004"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc005", "label": "sjc-dc12-acc005", "shape": "dot", "title": "sjc-dc12-acc005"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc006", "label": "sjc-dc12-acc006", "shape": "dot", "title": "sjc-dc12-acc006"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc007", "label": "sjc-dc12-acc007", "shape": "dot", "title": "sjc-dc12-acc007"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc008", "label": "sjc-dc12-acc008", "shape": "dot", "title": "sjc-dc12-acc008"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc009", "label": "sjc-dc12-acc009", "shape": "dot", "title": "sjc-dc12-acc009"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc010", "label": "sjc-dc12-acc010", "shape": "dot", "title": "sjc-dc12-acc010"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc011", "label": "sjc-dc12-acc011", "shape": "dot", "title": "sjc-dc12-acc011"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc012", "label": "sjc-dc12-acc012", "shape": "dot", "title": "sjc-dc12-acc012"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc101", "label": "sjc-dc12-acc101", "shape": "dot", "title": "sjc-dc12-acc101"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc102", "label": "sjc-dc12-acc102", "shape": "dot", "title": "sjc-dc12-acc102"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc103", "label": "sjc-dc12-acc103", "shape": "dot", "title": "sjc-dc12-acc103"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc104", "label": "sjc-dc12-acc104", "shape": "dot", "title": "sjc-dc12-acc104"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc105", "label": "sjc-dc12-acc105", "shape": "dot", "title": "sjc-dc12-acc105"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc106", "label": "sjc-dc12-acc106", "shape": "dot", "title": "sjc-dc12-acc106"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc107", "label": "sjc-dc12-acc107", "shape": "dot", "title": "sjc-dc12-acc107"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc108", "label": "sjc-dc12-acc108", "shape": "dot", "title": "sjc-dc12-acc108"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc109", "label": "sjc-dc12-acc109", "shape": "dot", "title": "sjc-dc12-acc109"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc110", "label": "sjc-dc12-acc110", "shape": "dot", "title": "sjc-dc12-acc110"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc111", "label": "sjc-dc12-acc111", "shape": "dot", "title": "sjc-dc12-acc111"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc112", "label": "sjc-dc12-acc112", "shape": "dot", "title": "sjc-dc12-acc112"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc201", "label": "sjc-dc12-acc201", "shape": "dot", "title": "sjc-dc12-acc201"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc202", "label": "sjc-dc12-acc202", "shape": "dot", "title": "sjc-dc12-acc202"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc203", "label": "sjc-dc12-acc203", "shape": "dot", "title": "sjc-dc12-acc203"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc204", "label": "sjc-dc12-acc204", "shape": "dot", "title": "sjc-dc12-acc204"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc205", "label": "sjc-dc12-acc205", "shape": "dot", "title": "sjc-dc12-acc205"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc206", "label": "sjc-dc12-acc206", "shape": "dot", "title": "sjc-dc12-acc206"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc207", "label": "sjc-dc12-acc207", "shape": "dot", "title": "sjc-dc12-acc207"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc208", "label": "sjc-dc12-acc208", "shape": "dot", "title": "sjc-dc12-acc208"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc209", "label": "sjc-dc12-acc209", "shape": "dot", "title": "sjc-dc12-acc209"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc210", "label": "sjc-dc12-acc210", "shape": "dot", "title": "sjc-dc12-acc210"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc211", "label": "sjc-dc12-acc211", "shape": "dot", "title": "sjc-dc12-acc211"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc212", "label": "sjc-dc12-acc212", "shape": "dot", "title": "sjc-dc12-acc212"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc301", "label": "sjc-dc12-acc301", "shape": "dot", "title": "sjc-dc12-acc301"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc302", "label": "sjc-dc12-acc302", "shape": "dot", "title": "sjc-dc12-acc302"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc303", "label": "sjc-dc12-acc303", "shape": "dot", "title": "sjc-dc12-acc303"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc304", "label": "sjc-dc12-acc304", "shape": "dot", "title": "sjc-dc12-acc304"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc305", "label": "sjc-dc12-acc305", "shape": "dot", "title": "sjc-dc12-acc305"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc306", "label": "sjc-dc12-acc306", "shape": "dot", "title": "sjc-dc12-acc306"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc307", "label": "sjc-dc12-acc307", "shape": "dot", "title": "sjc-dc12-acc307"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc308", "label": "sjc-dc12-acc308", "shape": "dot", "title": "sjc-dc12-acc308"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc309", "label": "sjc-dc12-acc309", "shape": "dot", "title": "sjc-dc12-acc309"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc310", "label": "sjc-dc12-acc310", "shape": "dot", "title": "sjc-dc12-acc310"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc311", "label": "sjc-dc12-acc311", "shape": "dot", "title": "sjc-dc12-acc311"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc312", "label": "sjc-dc12-acc312", "shape": "dot", "title": "sjc-dc12-acc312"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc401", "label": "sjc-dc12-acc401", "shape": "dot", "title": "sjc-dc12-acc401"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc402", "label": "sjc-dc12-acc402", "shape": "dot", "title": "sjc-dc12-acc402"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc403", "label": "sjc-dc12-acc403", "shape": "dot", "title": "sjc-dc12-acc403"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc404", "label": "sjc-dc12-acc404", "shape": "dot", "title": "sjc-dc12-acc404"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc405", "label": "sjc-dc12-acc405", "shape": "dot", "title": "sjc-dc12-acc405"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc406", "label": "sjc-dc12-acc406", "shape": "dot", "title": "sjc-dc12-acc406"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc407", "label": "sjc-dc12-acc407", "shape": "dot", "title": "sjc-dc12-acc407"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc408", "label": "sjc-dc12-acc408", "shape": "dot", "title": "sjc-dc12-acc408"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc409", "label": "sjc-dc12-acc409", "shape": "dot", "title": "sjc-dc12-acc409"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc410", "label": "sjc-dc12-acc410", "shape": "dot", "title": "sjc-dc12-acc410"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc411", "label": "sjc-dc12-acc411", "shape": "dot", "title": "sjc-dc12-acc411"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-acc412", "label": "sjc-dc12-acc412", "shape": "dot", "title": "sjc-dc12-acc412"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist01", "label": "sjc-dc12-dist01", "shape": "dot", "title": "sjc-dc12-dist01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist02", "label": "sjc-dc12-dist02", "shape": "dot", "title": "sjc-dc12-dist02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist03", "label": "sjc-dc12-dist03", "shape": "dot", "title": "sjc-dc12-dist03"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist04", "label": "sjc-dc12-dist04", "shape": "dot", "title": "sjc-dc12-dist04"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist05", "label": "sjc-dc12-dist05", "shape": "dot", "title": "sjc-dc12-dist05"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist06", "label": "sjc-dc12-dist06", "shape": "dot", "title": "sjc-dc12-dist06"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist07", "label": "sjc-dc12-dist07", "shape": "dot", "title": "sjc-dc12-dist07"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist08", "label": "sjc-dc12-dist08", "shape": "dot", "title": "sjc-dc12-dist08"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist09", "label": "sjc-dc12-dist09", "shape": "dot", "title": "sjc-dc12-dist09"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-dc12-dist10", "label": "sjc-dc12-dist10", "shape": "dot", "title": "sjc-dc12-dist10"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-internet", "label": "sjc-internet", "shape": "dot", "title": "sjc-internet"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-isp-edge01", "label": "sjc-isp-edge01", "shape": "dot", "title": "sjc-isp-edge01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-isp-edge02", "label": "sjc-isp-edge02", "shape": "dot", "title": "sjc-isp-edge02"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "sjc-te-fw01", "label": "sjc-te-fw01", "shape": "dot", "title": "sjc-te-fw01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "usa-core-p01", "label": "usa-core-p01", "shape": "dot", "title": "usa-core-p01"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "usa-core-p02", "label": "usa-core-p02", "shape": "dot", "title": "usa-core-p02"}]);
+                  edges = new vis.DataSet([{"from": "atl-app-lb01", "to": "atl-ce02"}, {"from": "atl-app-lb01", "to": "atl-ce01"}, {"from": "atl-ce01", "to": "atl-te-fw01"}, {"from": "atl-ce01", "to": "atl-core-pe01"}, {"from": "atl-ce01", "to": "atl-ce02"}, {"from": "atl-ce01", "to": "atl-core-pe02"}, {"from": "atl-ce01", "to": "atl-isp-edge01"}, {"from": "atl-ce01", "to": "atl-isp-edge02"}, {"from": "atl-ce01", "to": "atl-dc01-spine01"}, {"from": "atl-ce01", "to": "atl-dc01-spine02"}, {"from": "atl-ce02", "to": "atl-te-fw01"}, {"from": "atl-ce02", "to": "atl-core-pe01"}, {"from": "atl-ce02", "to": "atl-core-pe02"}, {"from": "atl-ce02", "to": "atl-isp-edge01"}, {"from": "atl-ce02", "to": "atl-isp-edge02"}, {"from": "atl-ce02", "to": "atl-dc01-spine01"}, {"from": "atl-ce02", "to": "atl-dc01-spine02"}, {"from": "atl-core-pe01", "to": "usa-core-p01"}, {"from": "atl-core-pe01", "to": "usa-core-p02"}, {"from": "atl-core-pe02", "to": "usa-core-p01"}, {"from": "atl-core-pe02", "to": "usa-core-p02"}, {"from": "atl-dc01-acc01", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc01", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc02", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc03", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc03", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc04", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc04", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc05", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc05", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc06", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc07", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc08", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc08", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc09", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc09", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc10", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc10", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc11", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc11", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc12", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc12", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc13", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc13", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc14", "to": "atl-dc01-spine02"}, {"from": "atl-dc01-acc14", "to": "atl-dc01-spine01"}, {"from": "atl-dc01-acc14", "to": "nsx-esxi-6-5-3_atl-nsx-Dswitch"}, {"from": "atl-dc01-spine01", "to": "atl-dc01-spine02"}, {"from": "atl-edge-fw01", "to": "atl-isp-edge01"}, {"from": "atl-edge-fw01", "to": "atl-edge-fw02"}, {"from": "atl-edge-fw02", "to": "atl-isp-edge02"}, {"from": "atl-internet", "to": "internet"}, {"from": "atl-internet", "to": "atl-isp-edge01"}, {"from": "atl-internet", "to": "atl-isp-edge02"}, {"from": "atl-isp-edge01", "to": "atl-isp-edge02"}, {"from": "nsx-esxi-6-5-1_sjc-nsx-DSwitch", "to": "nsx-manager-6-4_edge-1"}, {"from": "nsx-esxi-6-5-1_sjc-nsx-DSwitch", "to": "sjc-dc12-acc208"}, {"from": "nsx-esxi-6-5-1_sjc-nsx-DSwitch", "to": "nsx-esxi-6-5-3_atl-nsx-Dswitch"}, {"from": "sjc-app-lb01", "to": "sjc-ce01"}, {"from": "sjc-app-lb01", "to": "sjc-ce02"}, {"from": "sjc-ce01", "to": "sjc-te-fw01"}, {"from": "sjc-ce01", "to": "sjc-core-pe01"}, {"from": "sjc-ce01", "to": "sjc-core-pe02"}, {"from": "sjc-ce01", "to": "sjc-ce02"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist10"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist09"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist07"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist06"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist05"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist04"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist03"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist02"}, {"from": "sjc-ce01", "to": "sjc-dc12-dist01"}, {"from": "sjc-ce01", "to": "sjc-isp-edge01"}, {"from": "sjc-ce01", "to": "sjc-isp-edge02"}, {"from": "sjc-ce02", "to": "sjc-te-fw01"}, {"from": "sjc-ce02", "to": "sjc-core-pe01"}, {"from": "sjc-ce02", "to": "sjc-core-pe02"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist10"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist09"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist08"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist07"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist06"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist05"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist04"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist03"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist02"}, {"from": "sjc-ce02", "to": "sjc-dc12-dist01"}, {"from": "sjc-ce02", "to": "sjc-isp-edge02"}, {"from": "sjc-ce02", "to": "sjc-isp-edge01"}, {"from": "sjc-core-pe01", "to": "usa-core-p01"}, {"from": "sjc-core-pe01", "to": "usa-core-p02"}, {"from": "sjc-core-pe02", "to": "usa-core-p01"}, {"from": "sjc-core-pe02", "to": "usa-core-p02"}, {"from": "sjc-dc12-acc001", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc001", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc002", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc002", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc003", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc003", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc004", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc004", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc005", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc005", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc006", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc006", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc007", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc007", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc008", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc008", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc009", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc009", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc010", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc010", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc011", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc011", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc012", "to": "sjc-dc12-dist01"}, {"from": "sjc-dc12-acc012", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-acc101", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc101", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc102", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc102", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc103", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc104", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc104", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc105", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc105", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc106", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc106", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc107", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc107", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc108", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc108", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc109", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc109", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc110", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc110", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc111", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc111", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc112", "to": "sjc-dc12-dist03"}, {"from": "sjc-dc12-acc112", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-acc201", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc201", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc202", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc202", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc203", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc203", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc204", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc204", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc205", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc206", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc206", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc207", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc207", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc208", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc208", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc209", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc209", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc210", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc210", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc211", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc211", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc212", "to": "sjc-dc12-dist05"}, {"from": "sjc-dc12-acc212", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-acc301", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc301", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc302", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc302", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc303", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc304", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc305", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc306", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc306", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc307", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc307", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc308", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc308", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc309", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc309", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc310", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc310", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc311", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc311", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc312", "to": "sjc-dc12-dist07"}, {"from": "sjc-dc12-acc312", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-acc401", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc401", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc402", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc402", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc403", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc403", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc404", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc404", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc405", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc405", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc406", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc406", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc407", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc407", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc408", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc408", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc409", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc409", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc410", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc410", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc411", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-acc411", "to": "sjc-dc12-dist10"}, {"from": "sjc-dc12-acc412", "to": "sjc-dc12-dist09"}, {"from": "sjc-dc12-dist01", "to": "sjc-dc12-dist02"}, {"from": "sjc-dc12-dist03", "to": "sjc-dc12-dist04"}, {"from": "sjc-dc12-dist05", "to": "sjc-dc12-dist06"}, {"from": "sjc-dc12-dist07", "to": "sjc-dc12-dist08"}, {"from": "sjc-dc12-dist09", "to": "sjc-dc12-dist10"}, {"from": "sjc-internet", "to": "sjc-isp-edge01"}, {"from": "sjc-internet", "to": "sjc-isp-edge02"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
