@@ -1,5 +1,6 @@
 ## Example graphing network physical adjacencies using Forward Enteprise as a source of truth
 
-![image](https://github.com/gaberger/pyvis-forward/assets/58652/93cdca2a-6651-46c7-9cad-534497662c30)
+![image](https://github.com/gaberger/pyvis-forward/assets/58652/a4da0c62-11c9-4df6-b10a-1c36ffdd77ec)
+
 
 
